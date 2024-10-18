@@ -1,22 +1,25 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, request, render_template, redirect
+
 
 app = Flask(__name__)
 
-@app.route('/')
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('templates/index.html')
+    if request.method == 'POST':
+        # Obter os dados do formulário
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
+        
+        return render_template('resposta.html', nome = nome, email = email, senha = senha)
+    else:
+        return render_template('index.html')
 
-@app.route('/submit', methods=['POST'])
-def add_dado():
-    data = request.get_json()  
-    nome = data.get('nome')
-    email = data.get('email')
-    senha = data.get('senha')
-    confirmacao = data.get('confirmacao')
-
-    novo_dado = bd(nome=nome, email=email, senha=senha, confirmacao=confirmacao)
-
-    return f'Nome: {nome}, Email: {email}, Senha: {senha}'
+@app.route('/resposta', methods=['GET'])
+def resposta(nome,email,senha):
+    return render_template('resposta.html', nome = nome, email = email, senha = senha)
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
